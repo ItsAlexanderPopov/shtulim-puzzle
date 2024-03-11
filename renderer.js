@@ -19,22 +19,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Function to update error message with loading animation and countdown timer
     function showLoadingAnimation() {
-        let countdown = 30;
+        let countdown = 29;
         const countdownInterval = setInterval(() => {
-            if (countdown <= 0) {
+            if (countdown < 0) {
                 clearInterval(countdownInterval);
+                errorMsg.textContent = 'Error: Wrong Answer, Try Again in (30 seconds)';
             } else {
                 errorMsg.textContent = `Error: Wrong Answer, Try Again in (${countdown} seconds)`;
                 countdown--;
             }
         }, 1000);
-    }
-    
-    // Function to stop loading animation and countdown timer
-    function stopLoadingAnimation() {
-        errorMsg.textContent = '';
     }
 
     keypadButtons.forEach(button => {
@@ -45,14 +40,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if (button.classList.contains('number')) {
                 if (resultInput.value.length < 4) {
                     resultInput.value += buttonText;
-                    errorMsg.style.opacity = '0';
+                    errorMsg.style.visibility = 'hidden';
                 }
             }
 
             // Handle delete button
             if (button.classList.contains('delete')) {
                 resultInput.value = resultInput.value.slice(0, -1); // Remove last character
-                errorMsg.style.opacity = '0';
+                errorMsg.style.visibility = 'hidden';
             }
 
             // Handle enter button
@@ -65,15 +60,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.ipcRenderer.send('open-folder', true);
                     processing = false;
                     enableButtons();
-                    errorMsg.style.opacity = '0';
+                    errorMsg.style.visibility = 'hidden';
                 } else {
                     showLoadingAnimation();
-                    errorMsg.style.opacity = '1';
+                    errorMsg.style.visibility = 'visible';
                     // Disable user interaction for 30 seconds
                     setTimeout(() => {
                         processing = false;
+                        errorMsg.style.visibility = 'hidden';
+                        /* errorMsg.textContent = 'Error: Wrong Answer, Try Again in (30 seconds)'; */
                         enableButtons();
-                        stopLoadingAnimation();
                     }, 30000);
                 }
             }
