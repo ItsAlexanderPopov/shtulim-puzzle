@@ -1,10 +1,12 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, Tray, Menu } = require('electron');
 const path = require('path');
-const ipcMain = require("electron").ipcMain;
-const { shell } = require("electron");
+
+let mainWindow;
+let tray;
+let willQuitApp = false;
 
 function createWindow() {
-    const mainWindow = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         width: 480,
         height: 660,
         maximizable: false,
@@ -17,30 +19,88 @@ function createWindow() {
         autoHideMenuBar: true,
         fullscreenable: false,
     });
-    
+
     mainWindow.loadFile('index.html');
-    /* mainWindow.webContents.openDevTools(); */
-}
 
-app.whenReady().then(() => {
-    createWindow();
-
-    app.on('activate', () => {
-        if (BrowserWindow.getAllWindows().length === 0) {
-            createWindow();
+    mainWindow.on('close', function (event) {
+        if (!willQuitApp) {
+            event.preventDefault();
+            mainWindow.hide();
         }
     });
-});
 
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
-});
+    mainWindow.on('closed', function () {
+        mainWindow = null;
+    });
+}
 
-ipcMain.on('open-folder', (event, arg) => {
-    if(arg){
-        const folderPath = path.join(app.getPath("desktop"), "Rocket");
-        shell.openPath(folderPath);
-    }
-});
+function createTray() {
+    tray = new Tray(path.join(__dirname, 'icon.ico'));
+
+    const contextMenu = Menu.buildFromTemplate([
+        {
+            label: 'Show App',
+            click: function () {
+                mainWindow.show();
+            }
+        },
+        {
+            label: 'Quit',
+            click: function () {
+                willQuitApp = true;
+                app.quit(); // Quit the application when 'Quit' is clicked in the tray menu
+            }
+        }
+    ]);
+
+    tray.setToolTip('My Electron App');
+    tray.setContextMenu(contextMenu);
+
+    tray.on('click', function () {
+        mainWindow.show(); // Show the main window when tray icon is clicked
+    });
+}
+
+// Check if another instance of the app is already running
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+    app.quit();
+} else {
+    app.on('second-instance', () => {
+        // Another instance was launched, focus the existing window
+        if (mainWindow) {
+            if (mainWindow.isMinimized()) {
+                mainWindow.restore();
+            }
+            mainWindow.show();
+            mainWindow.focus();
+        }
+    });
+
+    app.whenReady().then(() => {
+        createWindow();
+        createTray();
+        
+        app.on('activate', () => {
+            if (BrowserWindow.getAllWindows().length === 0) {
+                createWindow();
+            } else {
+                mainWindow.show(); // Show the main window if it's hidden in the tray when activating the app
+            }
+        });
+    });
+
+    app.on('window-all-closed', () => {
+        if (process.platform !== 'darwin') {
+            app.quit();
+        }
+    });
+
+    ipcMain.on('open-folder', (event, arg) => {
+        if(arg){
+            const folderPath = path.join(app.getPath("desktop"), "Rocket");
+            shell.openPath(folderPath);
+        }
+    });
+}

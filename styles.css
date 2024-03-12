@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Kufam');
 
-
 body {
     font-family: 'Kufam', sans-serif; 
     display: flex;
@@ -23,11 +22,13 @@ body {
 #question {
     font-size: 24px;
 }
+
 #error {
     font-size: 20px;
     font-weight: bold;
     visibility: hidden;
 }
+
 #result {
     display: inline-block;
     width: 300px;
@@ -35,10 +36,8 @@ body {
     font-size: 80px;
     letter-spacing: 10px;
     padding-left: 20px;
-
     margin-bottom: 20px;
 }
-
 
 button {
     width: 100%;
