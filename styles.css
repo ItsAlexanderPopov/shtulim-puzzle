@@ -9,6 +9,7 @@ body {
     height: 100vh;
     margin: 0;
     overflow: hidden;
+    user-select: none;
 }
   
 .keypad {
@@ -21,13 +22,16 @@ body {
 
 #question {
     font-size: 24px;
+    user-select: text;
 }
 
 #error {
     font-size: 20px;
     font-weight: bold;
     visibility: hidden;
+    margin: 0;
 }
+
 
 #result {
     display: inline-block;

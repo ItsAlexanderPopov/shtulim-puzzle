@@ -7,7 +7,7 @@ let willQuitApp = false;
 
 function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 480,
+        width: 500,
         height: 660,
         maximizable: false,
         resizable: false,
