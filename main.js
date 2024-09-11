@@ -18,6 +18,7 @@ function createWindow() {
         },
         autoHideMenuBar: true,
         fullscreenable: false,
+        icon: path.join(__dirname, 'icon.ico') 
     });
 
     mainWindow.loadFile('index.html');
@@ -39,7 +40,7 @@ function createTray() {
 
     const contextMenu = Menu.buildFromTemplate([
         {
-            label: 'Show App',
+            label: 'Open',
             click: function () {
                 mainWindow.show();
             }
@@ -53,7 +54,7 @@ function createTray() {
         }
     ]);
 
-    tray.setToolTip('My Electron App');
+    tray.setToolTip('Rocket');
     tray.setContextMenu(contextMenu);
 
     tray.on('click', function () {
