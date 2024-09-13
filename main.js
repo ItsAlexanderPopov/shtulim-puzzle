@@ -1,9 +1,12 @@
 const { app, BrowserWindow, ipcMain, shell, Tray, Menu } = require('electron');
 const path = require('path');
+const { GlobalKeyboardListener } = require("node-global-key-listener");
+const { exec } = require('child_process');
 
 let mainWindow;
 let tray;
 let willQuitApp = false;
+let keyListener;
 
 function createWindow() {
     mainWindow = new BrowserWindow({
@@ -49,7 +52,7 @@ function createTray() {
             label: 'Quit',
             click: function () {
                 willQuitApp = true;
-                app.quit(); // Quit the application when 'Quit' is clicked in the tray menu
+                app.quit();
             }
         }
     ]);
@@ -58,18 +61,39 @@ function createTray() {
     tray.setContextMenu(contextMenu);
 
     tray.on('click', function () {
-        mainWindow.show(); // Show the main window when tray icon is clicked
+        mainWindow.show();
     });
 }
 
-// Check if another instance of the app is already running
+function setupKeyListener() {
+    keyListener = new GlobalKeyboardListener();
+    
+    let isWinKeyPressed = false;
+
+    keyListener.addListener(function (e) {
+        if (e.state == "DOWN" && e.name == "LEFT META") {
+            isWinKeyPressed = true;
+        }
+        if (e.state == "UP" && e.name == "LEFT META") {
+            isWinKeyPressed = false;
+        }
+        if (isWinKeyPressed && e.state == "DOWN" && e.name == "L") {
+            console.log('Windows lock detected. Terminating app.');
+            if (process.platform === 'win32') {
+                exec('rundll32.exe user32.dll,LockWorkStation');
+            }
+            willQuitApp = true;
+            app.quit();
+        }
+    });
+}
+
 const gotTheLock = app.requestSingleInstanceLock();
 
 if (!gotTheLock) {
     app.quit();
 } else {
     app.on('second-instance', () => {
-        // Another instance was launched, focus the existing window
         if (mainWindow) {
             if (mainWindow.isMinimized()) {
                 mainWindow.restore();
@@ -82,14 +106,23 @@ if (!gotTheLock) {
     app.whenReady().then(() => {
         createWindow();
         createTray();
+        if (process.platform === 'win32') {
+            setupKeyListener();
+        }
         
         app.on('activate', () => {
             if (BrowserWindow.getAllWindows().length === 0) {
                 createWindow();
             } else {
-                mainWindow.show(); // Show the main window if it's hidden in the tray when activating the app
+                mainWindow.show();
             }
         });
+    });
+
+    app.on('will-quit', () => {
+        if (keyListener) {
+            keyListener.kill();
+        }
     });
 
     app.on('window-all-closed', () => {
@@ -100,7 +133,7 @@ if (!gotTheLock) {
 
     ipcMain.on('open-folder', (event, arg) => {
         if(arg){
-            const folderPath = path.join(app.getPath("desktop"), "Rocket");
+            const folderPath = path.join(app.getPath("desktop"), "Secret Documents");
             shell.openPath(folderPath);
         }
     });

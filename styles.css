@@ -10,8 +10,8 @@ body {
     margin: 0;
     overflow: hidden;
     user-select: none;
-    background-color: #121212; /* Dark background */
-    color: #4CAF50; /* Green text */
+    background-color: #121212;
+    color: #4CAF50;
 }
   
 .keypad {
@@ -32,7 +32,7 @@ body {
     font-weight: bold;
     visibility: hidden;
     margin: 0;
-    color: #FF5252; /* Red color for error messages */
+    color: #FF5252;
 }
 
 #result {
@@ -43,8 +43,8 @@ body {
     letter-spacing: 10px;
     padding-left: 20px;
     margin-bottom: 20px;
-    background-color: #333333; /* Dark gray background for input */
-    color: #4CAF50; /* Green text for input */
+    background-color: #333333;
+    color: #4CAF50;
     border: none;
     border-radius: 5px;
 }
@@ -54,8 +54,8 @@ button {
     height: 100%;
     font-size: 60px;
     outline: 0;
-    background-color: #424242; /* Gray background for buttons */
-    color: #4CAF50; /* Green text for buttons */
+    background-color: #424242;
+    color: #4CAF50;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -63,9 +63,9 @@ button {
 }
 
 button:hover {
-    background-color: #616161; /* Lighter gray on hover */
+    background-color: #616161;
 }
 
 button:active {
-    background-color: #212121; /* Darker gray when pressed */
+    background-color: #212121;
 }
