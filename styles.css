@@ -10,6 +10,8 @@ body {
     margin: 0;
     overflow: hidden;
     user-select: none;
+    background-color: #121212; /* Dark background */
+    color: #4CAF50; /* Green text */
 }
   
 .keypad {
@@ -30,8 +32,8 @@ body {
     font-weight: bold;
     visibility: hidden;
     margin: 0;
+    color: #FF5252; /* Red color for error messages */
 }
-
 
 #result {
     display: inline-block;
@@ -41,6 +43,10 @@ body {
     letter-spacing: 10px;
     padding-left: 20px;
     margin-bottom: 20px;
+    background-color: #333333; /* Dark gray background for input */
+    color: #4CAF50; /* Green text for input */
+    border: none;
+    border-radius: 5px;
 }
 
 button {
@@ -48,4 +54,18 @@ button {
     height: 100%;
     font-size: 60px;
     outline: 0;
+    background-color: #424242; /* Gray background for buttons */
+    color: #4CAF50; /* Green text for buttons */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #616161; /* Lighter gray on hover */
+}
+
+button:active {
+    background-color: #212121; /* Darker gray when pressed */
 }
